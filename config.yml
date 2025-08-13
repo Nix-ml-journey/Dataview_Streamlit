@@ -1,1 +1,12 @@
 Dataset_path: "/home/user/Desktop/Forbes/vir_env/cleaned_data.csv"
+
+Selected_Models: "XGBoost Regressor"
+
+Model_type: ["Linear Regression", "Random Forest Regressor", "Gradient Boosting Regressor", "XGBoost Regressor", "Support Vector Regressor", "K-Nearest Neighbors Regressor", "Decision Tree Regressor"]
+Model_Scaler: "StandardScaler"
+Model_Metrics: ["mean_squared_error", "r2_score"]
+
+Features:
+  numerical: ["Age", "Change_numeric(Billions)", "Percentage_Change_Clean(%)"]
+  categorical: ["Source", "Country/Territory"]
+  target: "Net Worth_numeric(Billions)"
