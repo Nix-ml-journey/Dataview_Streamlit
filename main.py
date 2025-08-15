@@ -1,22 +1,16 @@
-from Data_loader import DataLoader
-import logging
-import sys 
 import streamlit as st 
+import logging
 from UI import streamlit_design
-import pandas as pd
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def main():
     try:
-        df = DataLoader('config.yml').load_data()
-        logging.info(f"Successfully loaded data")
+        streamlit_design()
     except Exception as e:
-        logging.error(f"Error loading data: {e}")
-        sys.exit(1)
+        st.error(f"An Error Occured for the UI: {e}")
+        logging.error(f"Streamlit Error: {e} ")
 
-    st.title("Forbes 2000 Dataset")
-    st.write(df.head())
-    st.write(df.info())
-    st.write(df.columns)
 
 if __name__ == "__main__":
     main()

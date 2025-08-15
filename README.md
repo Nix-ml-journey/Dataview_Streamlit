@@ -6,4 +6,4 @@ I also use Cursor to help me with coding. The project structure will evolve over
 
 ## Update for the things that I made
 
-I have updated the config.yml with several models that we can choose from, and I have set the model scaler and the metrics that will be used for evaluation during training and testing. I have created a new Python code called Model.py so that when we run it, it will use the model that we choose (we set the model in the config), and after that we will get a new result file named results.json. It's not that good yet - I have only tested with Linear Regression so far.
+I have updated the code so that Streamlit now functions properly when running "streamlit run main.py". However, there are still some improvements needed: the results page in the Streamlit UI is only reading the old results.json file from when I ran the XGBoost model, which needs to be fixed. Also, the dataset I am using has duplicate columns that need to be removed from the view.
