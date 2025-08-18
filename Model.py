@@ -1,6 +1,9 @@
 import pandas as pd
 import logging 
 import yaml
+import os 
+import sys
+import json
 from sklearn.model_selection import train_test_split 
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
@@ -9,11 +12,11 @@ from sklearn.svm import SVR
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor  
 from sklearn.metrics import mean_squared_error, r2_score
-import json
 from Data_loader import DataLoader
-import sys
 
-with open('config.yml', 'r') as file:
+# Fix: Use the correct config path
+config_path = os.path.join(os.path.dirname(__file__), 'config.yml')
+with open(config_path, 'r') as file:
     config = yaml.safe_load(file)
 
 
@@ -31,18 +34,45 @@ def get_model_type(Model_type):
 
     return models_type.get(Model_type)
 
-def save_results_to_json(results):
+def save_results_to_json(results, model_name):
     try:
-        with open('results.json', 'w') as file:
-            json.dump(results, file)
-        logging.info(f"Results saved to results.json")
+        os.makedirs('results', exist_ok=True)
+        clean_model_name = model_name.replace(' ', '_').replace('-','_')
+        filename = f"results/R1_{clean_model_name}.json"
+
+        with open(filename, 'w') as file:
+            json.dump(results, file, indent=2)
+        logging.info(f"Results saved to {filename}")
+        return filename
     except Exception as e:
         logging.error(f"Error saving results to json: {e}")
         sys.exit(1)
 
+def get_latest_result_file():
+    try:
+        result_dir = 'results'
+        if not os.path.exists(result_dir):
+            return None
+
+        json_files = [f for f in os.listdir(result_dir) if f.endswith('.json')]
+
+        if not json_files:
+            return None
+
+        json_files.sort(key=lambda x: os.path.getmtime(os.path.join(result_dir, x), reverse=True))
+
+        latest_file = os.path.join(result_dir, json_files[0])
+        logging.info(f"Latest result file: {latest_file}")
+        return latest_file
+
+    except Exception as e:
+        logging.error(f"Error getting latest result file:{e}")
+        return None
+
 def preprocess_data():
     try:
-        df = DataLoader('config.yml').load_data()
+        # Fix: Use the same config_path variable
+        df = DataLoader(config_path).load_data()
         logging.info(f"Successfully loaded data")
 
         df_cleaned = df.drop(columns=['Rank','Name','Percentage_Change_Clean'])
@@ -97,14 +127,15 @@ def split_data_and_train_model():
                     "R2_Score": float(r2)
                 }
             }
-            save_results_to_json(results)
-            logging.info(f"Results saved to results.json")
+            result_file = save_results_to_json(results, selected_models)
+            logging.info(f"Results saved to {result_file}")
             
-            return model, X_test, y_test, y_pred, mse, r2, results  # Add return statement
+            return model, X_test, y_test, y_pred, mse, r2, results, result_file
             
     except Exception as e:
         logging.error(f"Error training model: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
-    model, X_test, y_test, y_pred, mse, r2, results = split_data_and_train_model()
+    model, X_test, y_test, y_pred, mse, r2, results, result_file = split_data_and_train_model()
+    print(f"Model trained successfully! Results saved to: {result_file}")

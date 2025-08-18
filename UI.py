@@ -6,25 +6,36 @@ from Data_loader import DataLoader
 import logging
 import json
 import yaml
-from Model import split_data_and_train_model
+import os
+from Model import split_data_and_train_model, get_latest_result_file
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def load_data():
     try: 
-        data_loader = DataLoader('config.yml')
+        # Fix: Use the correct config path
+        config_path = os.path.join(os.path.dirname(__file__), 'config.yml')
+        data_loader = DataLoader(config_path)
         df = data_loader.load_data()
-        logging.info(f"Successfully loaded data")
-        return df 
+
+        df_cleaned = df.drop(columns=['Percentage_Change_Clean'])
+        logging.info(f"Successfully loaded data and removed duplicated columns")
+        return df_cleaned
     except Exception as e: 
         logging.error(f"Error loading data: {e}")
         return None 
     
 def load_model_results():
     try:
-        with open('results.json', 'r') as file:
-            results = json.load(file)
-        return results 
+        latest_file = get_latest_result_file()
+        if latest_file and os.path.exists(latest_file):
+            with open(latest_file, 'r') as file:
+                results = json.load(file)
+                results['result_file'] = latest_file
+                return results
+        else:
+            return None
+
     except Exception as e:
         logging.error(f"Error loading model results: {e}")
         return None
@@ -52,10 +63,12 @@ def create_visualizations(df):
 def model_selection_interface():
     st.header("Model Selection for Prediction")
 
-    with open('config.yml', 'r') as f:
+    # Fix: Use the correct config path
+    config_path = os.path.join(os.path.dirname(__file__), 'config.yml')
+    with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
 
-    available_models = config['Model_type']  # Fixed: use correct key from your config
+    available_models = config['Model_type'] 
     selected_model = st.selectbox("Select a model to use for prediction", available_models, index=0)
 
     st.info(f"Currently selected model is {selected_model}")
@@ -63,13 +76,13 @@ def model_selection_interface():
     if st.button("Train Selected Model"):
         with st.spinner("Training model... This may take a while..."):
             try:
-                # Fix: properly update config
                 config['Selected_Models'] = selected_model
-                with open('config.yml', 'w') as f:
+                # Fix: Save to the same config file
+                with open(config_path, 'w') as f:
                     yaml.dump(config, f, default_flow_style=False)
 
-                # Fix: match the return values from your Model.py function
-                model, X_test, y_test, y_pred, mse, r2, results = split_data_and_train_model()
+                # Updated function call to handle new return values
+                model, X_test, y_test, y_pred, mse, r2, results, result_file = split_data_and_train_model()
 
                 st.success("Model training completed successfully!")
 
@@ -81,6 +94,9 @@ def model_selection_interface():
 
                 st.subheader("Detailed Results")
                 st.json(results)
+                
+                # Show where results were saved
+                st.info(f"Results saved to: {result_file}")
 
             except Exception as e:
                 st.error(f"Error training model: {e}")
@@ -88,7 +104,7 @@ def model_selection_interface():
 def display_dataset_info(df):
     st.header("Dataset Overview and Statistics Information")
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         st.metric("Total Billionaires", len(df))
@@ -96,10 +112,6 @@ def display_dataset_info(df):
         st.metric("Total Countries", df['Country/Territory'].nunique())
     with col3:
         st.metric("Total Net Worth", f"{df['Net Worth_numeric(Billions)'].sum():.2f} Billion")
-    with col4:
-        # Fix: simplified average calculation
-        avg_worth = df['Net Worth_numeric(Billions)'].mean()
-        st.metric("Average Net Worth", f"{avg_worth:.2f} Billion")
 
     st.subheader("Dataset Preview")
     st.dataframe(df.head(10))
@@ -158,6 +170,9 @@ def streamlit_design():
         results = load_model_results()
         if results:
             st.json(results)
+
+            if 'result_file' in results:
+                st.info(f"Results loaded from: {results['result_file']}")
         else:
             st.warning("No model results found. Please train a model first.")
 

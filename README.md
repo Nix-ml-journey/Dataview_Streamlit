@@ -6,4 +6,4 @@ I also use Cursor to help me with coding. The project structure will evolve over
 
 ## Update for the things that I made
 
-I have updated the code so that Streamlit now functions properly when running "streamlit run main.py". However, there are still some improvements needed: the results page in the Streamlit UI is only reading the old results.json file from when I ran the XGBoost model, which needs to be fixed. Also, the dataset I am using has duplicate columns that need to be removed from the view.
+I have removed the duplicated column in the dataset while displaying in the Streamlit app, and I have changed the method of reading the dataset so that now the selected model is working properly. I also added a folder called "results" so that no matter which model is used, it will create a JSON output named "R1_{MODEL_NAME}.json".
