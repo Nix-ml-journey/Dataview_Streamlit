@@ -75,16 +75,25 @@ def model_selection_interface():
 
     if st.button("Train Selected Model"):
         with st.spinner("Training model... This may take a while..."):
+
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+        
             try:
                 config['Selected_Models'] = selected_model
-                # Fix: Save to the same config file
                 with open(config_path, 'w') as f:
                     yaml.dump(config, f, default_flow_style=False)
 
-                # Updated function call to handle new return values
+                progress_bar.progress(0)
+                status_text.text("Loading data...")
+
+                progress_bar.progress(40)
+                status_text.text("Training model...")
+
                 model, X_test, y_test, y_pred, mse, r2, results, result_file = split_data_and_train_model()
 
-                st.success("Model training completed successfully!")
+                progress_bar.progress(100)
+                status_text.text("Model training completed successfully!")
 
                 col1, col2 = st.columns(2)
                 with col1:

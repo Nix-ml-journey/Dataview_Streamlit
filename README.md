@@ -4,6 +4,6 @@ I perform data cleaning and EDA on Kaggle's "The World's Billionaires by Forbes"
 
 I also use Cursor to help me with coding. The project structure will evolve over time as development continues.
 
-## Update for the things that I made
+## Update for the things that I update. 
 
-I have removed the duplicated column in the dataset while displaying in the Streamlit app, and I have changed the method of reading the dataset so that now the selected model is working properly. I also added a folder called "results" so that no matter which model is used, it will create a JSON output named "R1_{MODEL_NAME}.json".
+I have added a progress bar to the Streamlit app that will display during the model training process.
