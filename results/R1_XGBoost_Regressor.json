@@ -1,0 +1,12 @@
+{
+  "Model": "XGBoost Regressor",
+  "Data_info": {
+    "Training_samples": 1244,
+    "Testing_samples": 312,
+    "Total_samples": 1556
+  },
+  "Performance_Metrics": {
+    "Mean_Squared_Error": 54.378547289021775,
+    "R2_Score": 0.4700242876771329
+  }
+}

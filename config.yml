@@ -1,0 +1,23 @@
+Dataset_path: /home/user/Desktop/Forbes/vir_env/cleaned_data.csv
+Features:
+  categorical:
+  - Source
+  - Country/Territory
+  numerical:
+  - Age
+  - Change_numeric(Billions)
+  - Percentage_Change_Clean(%)
+  target: Net Worth_numeric(Billions)
+Model_Metrics:
+- mean_squared_error
+- r2_score
+Model_Scaler: StandardScaler
+Model_type:
+- Linear Regression
+- Random Forest Regressor
+- Gradient Boosting Regressor
+- XGBoost Regressor
+- Support Vector Regressor
+- K-Nearest Neighbors Regressor
+- Decision Tree Regressor
+Selected_Models: Random Forest Regressor

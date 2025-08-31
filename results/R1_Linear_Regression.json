@@ -1,0 +1,15 @@
+{
+  "Model": "Linear Regression",
+  "Data_info": {
+    "Training_samples": 1244,
+    "Testing_samples": 312,
+    "Total_samples": 1556
+  },
+  "Performance_Metrics": {
+    "Mean_Squared_Error": 267.50891789001366,
+    "R2_Score": -1.6071536732666867
+  },
+  "Training_Time": {
+    "Training_Time_Seconds": 3.99
+  }
+}

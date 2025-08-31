@@ -1,0 +1,12 @@
+{
+  "Model": "Random Forest Regressor",
+  "Data_info": {
+    "Training_samples": 1244,
+    "Testing_samples": 312,
+    "Total_samples": 1556
+  },
+  "Performance_Metrics": {
+    "Mean_Squared_Error": 97.88053379143541,
+    "R2_Score": 0.04605201490678479
+  }
+}
