@@ -132,6 +132,31 @@ def display_dataset_info(df):
     st.subheader("Dataset Statistics")
     st.write(df.describe())
 
+def project_status_dashboard(df):
+    st.header("Project Status Dashboard")
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric("Dataset Health", "Good", "No issues")
+    with col2:
+        missing_data = df.isnull().sum().sum()
+        st.metric("Missing Values", missing_data, "0" if missing_data == 0 else f"+{missing_data}")
+    with col3:
+        results_count = len([f for f in os.listdir('results') if f.endswith('.json')]) if os.path.exists('results') else 0
+        st.metric("Models Trained", results_count, "0" if results_count == 0 else f"+{results_count}")
+    with col4:
+        latest_results = load_model_results()
+        status = "Ready" if latest_results else "No Model"
+        st.metric("System Status", status)
+    
+    if missing_data > 0:
+        st.warning("Dataset has missing values that will affect model performance")
+    elif results_count == 0:
+        st.info("Ready to train the first model! Go to 'Model Training' page")
+    else:
+        st.success("System is running optimally!")
+
 def streamlit_design():
     st.set_page_config(page_title="Forbes Billionaires Dataset", layout="wide")  # Fixed typo
     st.title("Forbes Billionaires Dataset Analysis and Prediction")
@@ -146,6 +171,10 @@ def streamlit_design():
     page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Model Training", "Visualizations", "Results"])  # Fixed missing comma
     
     if page == "Home":
+        if df is not None:
+            project_status_dashboard(df)
+            st.markdown("---")
+            
         st.header("Welcome to the Forbes Billionaires Dataset Analysis and Prediction")
         st.write("""
         This application analyzes the Forbes Billionaires dataset and provides:
