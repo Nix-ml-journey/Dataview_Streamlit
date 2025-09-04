@@ -114,6 +114,14 @@ def model_selection_interface():
                 progress_bar.empty()
                 status_text.empty()
 
+def export_to_csv(df, filename_prefix="forbes_data"):
+    try:
+        csv_data = df.to_csv(index=False)
+        return csv_data
+    except Exception as e:
+        st.error(f"Error exporting to CSV: {e}")
+        return None 
+
 def display_dataset_info(df):
     st.header("Dataset Overview and Statistics Information")
 
@@ -125,6 +133,23 @@ def display_dataset_info(df):
         st.metric("Total Countries", df['Country/Territory'].nunique())
     with col3:
         st.metric("Total Net Worth", f"{df['Net Worth_numeric(Billions)'].sum():.2f} Billion")
+
+    st.subheader("Export Data")
+    col1, col2 = st.columns([1, 2])
+
+    with col1:
+        if st.button("Get Full Dataset as CSV", type="primary"):
+            csv_data = export_to_csv(df, "forbes_full_dataset")
+            if csv_data:
+                st.download_button(
+                    label = "Click to Download CSV",
+                    data = csv_data,
+                    file_name = "forbes_billionaires_dataset.csv",
+                    mime = "text/csv"
+                ) 
+
+    with col2:
+        st.info("Export the complete Forbes billionaires dataset for external analysis")
 
     st.subheader("Dataset Preview")
     st.dataframe(df.head(10))
@@ -215,6 +240,24 @@ def streamlit_design():
 
             if 'result_file' in results:
                 st.info(f"Results loaded from: {results['result_file']}")
+
+            st.subheader("Export Results")
+            col1, col2 = st.columns([1, 2])
+            
+            with col1:
+                if st.button("Download Results as CSV", type="secondary"):
+                    results_df = pd.DataFrame([results])
+                    csv_data = export_to_csv(results_df, "model_results")
+                    if csv_data:
+                        st.download_button(
+                            label = "Click to Download Results CSV",
+                            data = csv_data,
+                            file_name = "model_results.csv",
+                            mime = "text/csv"
+                        )
+            
+            with col2:
+                st.info("Export model performance metrics and results for analysis")
         else:
             st.warning("No model results found. Please train a model first.")
 

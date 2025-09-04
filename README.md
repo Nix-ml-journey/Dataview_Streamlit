@@ -6,4 +6,4 @@ I also use Cursor to help me with coding. The project structure will evolve over
 
 ## Update for the things that I update. 
 
-I have added a Project Status Dashboard that displays key metrics including dataset health, missing values count, number of models trained, and system status. This provides a quick overview of the project's current state right on the home page.
+I have implemented CSV export functionality that allows users to download the complete Forbes billionaires dataset and model results. Users can export data from the "Data Overview" page and model performance metrics from the "Results" page for external analysis and further processing.
